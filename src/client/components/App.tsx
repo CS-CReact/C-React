@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Message } from 'types';
 import './App.css';
+import Spinner from './Spinner';
+import Description from './Description';
 
 function App(): JSX.Element {
   const [message, setMessage] = useState<Message>('');
@@ -16,13 +18,25 @@ function App(): JSX.Element {
       });
   };
 
+  const DummyTable = lazy(
+    () => import('./DummyTable' /* webpackPrefetch: true */)
+  );
+
   return (
     <div className="App">
-      <h1>Hello from the frontend!</h1>
-      <button type="button" onClick={updateMessageHandler}>
+      <Description />
+      <button type="button" className="button" onClick={updateMessageHandler}>
         Update Message
       </button>
       {message && <p>{message}</p>}
+      <h3 className="data-heading">Dummy Data</h3>
+      <div className="data-grid">
+        <Suspense fallback={<Spinner />}>
+          <div className="table">
+            <DummyTable />
+          </div>
+        </Suspense>
+      </div>
     </div>
   );
 }
